@@ -1407,10 +1407,10 @@
                 // 1. Code Blocks (```lang code ```)
                 let codeBlockCount = 0;
                 const codeBlocks =[];
-                html = html.replace(/```(\w*)\n(*?)```/g, (match, lang, code) => {
-                    const id = `code-block-${codeBlockCount++}`;
-                    codeBlocks.push({ id, code, lang: lang || 'text' });
-                    return `___CODE_BLOCK_${id}___`; // Placeholder
+              html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (match, lang, code) => {
+                const id = `code-block-${codeBlockCount++}`;
+                codeBlocks.push({ id, code, lang: lang || 'text' });
+                return `___CODE_BLOCK_${id}___`; 
                 });
 
                 // 2. Inline Code (`code`)
