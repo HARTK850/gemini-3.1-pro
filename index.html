@@ -2208,8 +2208,7 @@ buildGeminiPayload(messages) {
     // Convert app format (user/bot) to Gemini format (user/model)
     const contents = messages.map(msg => ({
         role: msg.role === 'bot' ? 'model' : 'user',
-        parts: [{ text: msg.content || msg.text }] // כאן התיקון - הוספת הערך
-    }));
+parts: [{ text: msg.content || msg.text }]    }));
 
     const payload = {
         contents: contents,
