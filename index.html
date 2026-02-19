@@ -2142,16 +2142,22 @@ html = html.replace(/<\/(h1|h2|h3|li|ul)><br>/g, '</$1>');
                         // It sends chunks like: "[\n{\n\"candidates\": ...\n},\n{\n..."
                         // We will extract text using regex for resilience in a browser UI
                         
-                        const textMatches = [...buffer.matchAll(/"text"\s*:\s*"(*(?:\\.*)*)"/g)];
-                        
-                        if (textMatches.length > 0) {
-                            // Reconstruct the full text so far
-                            let currentFullText = '';
-                            textMatches.forEach(m => {
-                                // unescape JSON string
-                                try { currentFullText += JSON.parse(`"${m}"`); } 
-                                catch(e) { /* ignore partial */ }
-                            });
+// תיקון ה-Regex: שימוש ב-.*? כדי לתפוס את התוכן בצורה "עצלנית" עד המירכאות הבאות
+const textMatches = [...buffer.matchAll(/"text"\s*:\s*"((?:\\.|[^"\\])*)"/g)];
+
+if (textMatches.length > 0) {
+    let currentFullText = '';
+    textMatches.forEach(m => {
+        try {
+            // m[1] הוא התוכן שתפסנו בתוך הסוגריים של ה-Regex
+            // אנחנו עוטפים במירכאות כדי ש-JSON.parse יתייחס לזה כמחרוזת חוקית
+            currentFullText += JSON.parse(`"${m[1]}"`); 
+        } 
+        catch(e) { 
+            /* התעלמות מחלקים לא שלמים של JSON בזמן Streaming */ 
+        }
+    });
+}
                             
                             if (currentFullText.length > botMessage.length) {
                                 botMessage = currentFullText;
