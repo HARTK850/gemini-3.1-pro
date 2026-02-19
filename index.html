@@ -2204,23 +2204,21 @@ if (textMatches.length > 0) {
                 }
             }
 
-            buildGeminiPayload(messages) {
-                // Convert app format (user/bot) to Gemini format (user/model)
-                const contents = messages.map(msg => ({
-                    role: msg.role === 'bot' ? 'model' : 'user',
-                    parts:
-                }));
+buildGeminiPayload(messages) {
+    // Convert app format (user/bot) to Gemini format (user/model)
+    const contents = messages.map(msg => ({
+        role: msg.role === 'bot' ? 'model' : 'user',
+        parts: [{ text: msg.content || msg.text }] // כאן התיקון - הוספת הערך
+    }));
 
-                const payload = {
-                    contents: contents,
-                    generationConfig: {
-                        temperature: this.settings.temperature,
-                        topK: this.settings.topK,
-                        topP: this.settings.topP,
-                        maxOutputTokens: this.settings.maxOutputTokens
-                    },
-                    safetySettings:
-                };
+    const payload = {
+        contents: contents,
+        generationConfig: {
+            temperature: this.settings.temperature,
+        }
+    };
+    return payload; // אל תשכח להחזיר את ה-payload
+}
 
                 // Add system instruction if exists
                 if (this.settings.systemInstruction) {
